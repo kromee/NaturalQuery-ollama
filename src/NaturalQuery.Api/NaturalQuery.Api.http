@@ -1,0 +1,22 @@
+@NaturalQuery.Api_HostAddress = http://localhost:5080
+
+### Generar SQL de vista previa con Ollama (la consulta no se ejecuta)
+POST {{NaturalQuery.Api_HostAddress}}/api/ai/sql/preview
+Content-Type: application/json
+
+{
+  "question": "¿Cuál fue el producto más vendido por cantidad?"
+}
+
+### Generar, validar y ejecutar como solo lectura
+POST {{NaturalQuery.Api_HostAddress}}/api/ai/sql
+Content-Type: application/json
+
+{
+  "question": "¿Cuál fue el producto más vendido por cantidad?"
+}
+
+GET {{NaturalQuery.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

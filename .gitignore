@@ -1,0 +1,27 @@
+**/bin/
+**/obj/
+.DS_Store
+.vs/
+.vscode/
+*.user
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+**/appsettings.Local.json
+**/appsettings.*.Local.json
+**/secrets.json
+
+# Local database files, backups, and exports
+*.mdf
+*.ldf
+*.bak
+*.bacpac
+*.dump
+*.csv
+
+# Local logs and scratch SQL files
+*.log
+/scripts/LocalAiDemo.sql
+/scripts/Use LocalAiDemo.sql
