@@ -52,6 +52,8 @@ internal sealed class OllamaSqlGenerator(HttpClient httpClient, IConfiguration c
                     COUNT(DISTINCT Venta.Id), agrupa por YEAR(Venta.Fecha) y MONTH(Venta.Fecha),
                     y devuelve ambos como columnas Año y Mes. SUM solo debe recibir expresiones
                     numéricas; nunca sumes nombres, ciudades, identificadores de texto ni fechas.
+                    Esta es SQL Server: nunca uses LIMIT, OFFSET ni sintaxis de MySQL o PostgreSQL.
+                    Para devolver pocas filas usa SELECT TOP n.
                     Usa nombres de tablas y columnas tal como aparecen arriba. No propongas escrituras,
                     procedimientos, múltiples sentencias ni acceso a otras tablas.
                     Si la pregunta no se puede contestar con este esquema, devuelve SELECT 1 WHERE 1 = 0.

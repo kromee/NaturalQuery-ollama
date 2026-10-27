@@ -1,0 +1,34 @@
+<form class="card" (submit)="$event.preventDefault(); run('execute')">
+  <label for="question">Pregunta a tu base de datos en español</label>
+  <textarea
+    id="question"
+    rows="3"
+    placeholder="Ej.: ¿Qué producto generó más ingresos y cuánto?"
+    [value]="question()"
+    [readonly]="store.busy()"
+    [attr.aria-invalid]="tooLong()"
+    (input)="onInput($event)"
+    (keydown)="onKeydown($event)"
+  ></textarea>
+
+  <div class="row">
+    <span class="counter" [class.over]="tooLong()">{{ question().length }}/{{ maxLength }}</span>
+    <span class="hint">Ctrl + Enter para consultar</span>
+    <span class="spacer"></span>
+    <button type="button" class="secondary" [disabled]="!canSubmit()" (click)="run('preview')">
+      Ver SQL
+    </button>
+    <button type="submit" class="primary" [disabled]="!canSubmit()">Consultar ▶</button>
+  </div>
+
+  @if (store.loading(); as mode) {
+    <div class="loading" role="status">
+      <span class="spinner" aria-hidden="true"></span>
+      <span>
+        {{ mode === 'preview' ? 'Generando SQL…' : 'Generando SQL, ejecutando y redactando respuesta…' }}
+        {{ seconds() }} s
+      </span>
+      <button type="button" class="link" (click)="store.cancel()">Cancelar</button>
+    </div>
+  }
+</form>

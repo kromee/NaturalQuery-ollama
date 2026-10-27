@@ -137,6 +137,7 @@ if (!string.IsNullOrWhiteSpace(connectionString))
             app.Logger.LogError(exception, "No se pudo ejecutar la consulta validada en LocalAiDemo.");
             return Results.Problem(
                 title: "No se pudo ejecutar la consulta en LocalAiDemo",
+                detail: exception.Message,
                 statusCode: StatusCodes.Status503ServiceUnavailable);
         }
     })

@@ -1,0 +1,13 @@
+<ul class="status-bar" aria-label="Estado de los servicios">
+  <li [attr.data-state]="api()" [title]="'API: ' + labels[api()]">
+    <span class="dot" aria-hidden="true"></span> API
+    <span class="sr-only">{{ labels[api()] }}</span>
+  </li>
+  <li [attr.data-state]="db()" [title]="'SQL Server: ' + labels[db()]">
+    <span class="dot" aria-hidden="true"></span> SQL Server
+    <span class="sr-only">{{ labels[db()] }}</span>
+  </li>
+  @if (model(); as m) {
+    <li class="model" title="Modelo configurado en la API">Modelo: {{ m }}</li>
+  }
+</ul>

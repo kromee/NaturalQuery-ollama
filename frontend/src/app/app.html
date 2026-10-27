@@ -1,0 +1,117 @@
+<main class="shell">
+  <header class="header">
+    <div>
+      <h1>NaturalQuery · Ollama</h1>
+      <p class="subtitle">Consulta tu base de datos en español.</p>
+    </div>
+    <app-status-bar />
+  </header>
+
+  <app-question-form />
+
+  <section class="output" aria-live="polite">
+    @if (store.error(); as e) {
+      <div class="card error" role="alert">
+        <strong>{{ e.title }}</strong>
+        @if (e.detail) {
+          <p>{{ e.detail }}</p>
+        }
+      </div>
+    }
+    @if (store.result(); as r) {
+      <article class="result-card">
+        <div class="result-heading">
+          <div>
+            <p class="eyebrow">Respuesta a tu pregunta</p>
+            <h2>{{ r.answer }}</h2>
+          </div>
+          <button type="button" class="sql-button" (click)="openSqlDialog()">Ver SQL</button>
+        </div>
+
+        <div class="result-summary">
+          <span class="result-count">{{ resultTitle(r) }}</span>
+          @if (r.truncated) {
+            <span class="warning">Mostrando las primeras 100 filas</span>
+          }
+        </div>
+
+        @if (chartItems().length) {
+          <section class="chart" aria-label="Resumen gráfico de resultados">
+            <p class="section-label">Vista rápida</p>
+            @for (item of chartItems(); track item.label) {
+              <div class="chart-row">
+                <span class="chart-label">{{ item.label }}</span>
+                <div class="chart-track" aria-hidden="true">
+                  <span class="chart-bar" [style.width.%]="item.width"></span>
+                </div>
+                <strong>{{ cellText(item.value) }}</strong>
+              </div>
+            }
+          </section>
+        }
+
+        <section class="table-section" aria-label="Resultados de la consulta">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  @for (column of r.columns; track column) {
+                    <th scope="col">{{ column }}</th>
+                  }
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of r.rows; track $index) {
+                  <tr>
+                    @for (cell of row; track $index) {
+                      <td>{{ cellText(cell) }}</td>
+                    }
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td class="empty-cell" [attr.colspan]="r.columns.length">
+                      No se encontraron datos para esta pregunta.
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </article>
+    }
+    @if (store.preview(); as p) {
+      <div class="card">
+        <div class="result-heading">
+          <div>
+            <p class="eyebrow">Vista previa</p>
+            <h2>Consulta generada</h2>
+          </div>
+          <button type="button" class="sql-button" (click)="openSqlDialog()">Ver SQL</button>
+        </div>
+        <p class="meta">No se ejecutó en la base. Usa «Consultar ▶» para ver datos y respuesta.</p>
+      </div>
+    }
+  </section>
+</main>
+
+@if (sqlDialogOpen()) {
+  <div class="modal-backdrop" (click)="closeSqlDialog()" role="presentation">
+    <section class="sql-modal" role="dialog" aria-modal="true" aria-labelledby="sql-title" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">SQL generado</p>
+          <h2 id="sql-title">Consulta de solo lectura</h2>
+        </div>
+        <button type="button" class="close-button" aria-label="Cerrar SQL" (click)="closeSqlDialog()">×</button>
+      </div>
+      <pre><code>{{ store.result()?.sql ?? store.preview()?.sql }}</code></pre>
+      <div class="modal-actions">
+        <button type="button" class="secondary" (click)="copySql(store.result()?.sql ?? store.preview()?.sql ?? '')">
+          Copiar SQL
+        </button>
+        <button type="button" class="primary" (click)="closeSqlDialog()">Cerrar</button>
+      </div>
+    </section>
+  </div>
+}

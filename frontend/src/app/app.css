@@ -1,0 +1,260 @@
+.shell {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.header,
+.result-heading,
+.modal-header,
+.modal-actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+}
+
+.header {
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+h1,
+h2 {
+  margin: 0;
+}
+
+h1 {
+  font-size: 1.5rem;
+}
+
+h2 {
+  max-width: 48rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--text-muted);
+}
+
+.output {
+  display: grid;
+  gap: 1rem;
+}
+
+.error {
+  border-color: var(--state-down);
+}
+
+.error p {
+  margin: 0.25rem 0 0;
+}
+
+.result-card {
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  box-shadow: 0 0.5rem 1.5rem rgb(30 41 59 / 7%);
+}
+
+.result-heading {
+  padding: 1.25rem 1.25rem 1rem;
+}
+
+.eyebrow,
+.section-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.sql-button {
+  flex: none;
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+}
+
+.result-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.result-count,
+.warning {
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.result-count {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.warning {
+  color: var(--state-warn);
+  background: color-mix(in srgb, var(--state-warn) 12%, transparent);
+}
+
+.chart {
+  display: grid;
+  gap: 0.55rem;
+  padding: 1.1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.chart-row {
+  display: grid;
+  grid-template-columns: minmax(7rem, 12rem) minmax(5rem, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.chart-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chart-track {
+  height: 0.55rem;
+  overflow: hidden;
+  background: var(--surface-alt);
+  border-radius: 99px;
+}
+
+.chart-bar {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #8b85f5);
+  border-radius: inherit;
+}
+
+.table-section {
+  padding: 1.25rem;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 0.55rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th,
+td {
+  padding: 0.7rem 0.85rem;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  color: var(--text-muted);
+  background: var(--surface-alt);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+tbody tr:hover {
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
+}
+
+.empty-cell {
+  padding: 1.25rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.modal-backdrop {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgb(15 19 26 / 55%);
+}
+
+.sql-modal {
+  width: min(52rem, 100%);
+  max-height: min(42rem, 90vh);
+  overflow: auto;
+  padding: 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 30%);
+}
+
+.close-button {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1;
+  place-items: center;
+}
+
+.modal-actions {
+  justify-content: flex-end;
+}
+
+pre {
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  overflow-x: auto;
+  background: var(--surface-alt);
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.meta {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 38rem) {
+  .result-heading {
+    flex-direction: column;
+  }
+
+  .sql-button {
+    align-self: flex-start;
+  }
+
+  .chart-row {
+    grid-template-columns: minmax(5rem, 1fr) minmax(4rem, 1.5fr) auto;
+    gap: 0.5rem;
+  }
+
+  .table-section {
+    padding: 0.75rem;
+  }
+}

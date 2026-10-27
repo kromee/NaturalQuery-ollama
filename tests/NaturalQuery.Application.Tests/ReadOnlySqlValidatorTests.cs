@@ -25,6 +25,15 @@ public sealed class ReadOnlySqlValidatorTests
         Assert.Equal("SELECT Id FROM Producto", normalized);
     }
 
+    [Fact]
+    public void ValidateAndNormalize_RewritesTrailingLimitAsSelectTop()
+    {
+        var normalized = _validator.ValidateAndNormalize(
+            "SELECT Nombre FROM Producto ORDER BY Nombre LIMIT 5");
+
+        Assert.Equal("SELECT TOP 5 Nombre FROM Producto ORDER BY Nombre", normalized);
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
@@ -41,6 +50,7 @@ public sealed class ReadOnlySqlValidatorTests
     [InlineData("SELECT * FROM Producto -- comentario")]
     [InlineData("SELECT * FROM (SELECT Id FROM Producto) AS p")]
     [InlineData("SELECT * FROM Producto OPTION (RECOMPILE)")]
+    [InlineData("SELECT Nombre FROM Producto LIMIT 5 OFFSET 10")]
     public void ValidateAndNormalize_RejectsUnsafeOrUnsupportedQueries(string sql)
     {
         Assert.Throws<SqlValidationException>(() => _validator.ValidateAndNormalize(sql));
