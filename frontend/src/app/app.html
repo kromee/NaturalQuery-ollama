@@ -1,0 +1,15 @@
+<main class="shell">
+  <h1>NaturalQuery · Ollama</h1>
+  <p class="subtitle">Consulta tu base de datos en español.</p>
+
+  @if (health(); as h) {
+    <p class="status ok">
+      ● API conectada · modelo {{ h.ollamaModel }} ·
+      base de datos {{ h.databaseConfigured ? 'configurada' : 'sin configurar' }}
+    </p>
+  } @else if (error(); as e) {
+    <p class="status fail">● {{ e.title }}@if (e.detail) { — {{ e.detail }} }</p>
+  } @else {
+    <p class="status">Comprobando API…</p>
+  }
+</main>
