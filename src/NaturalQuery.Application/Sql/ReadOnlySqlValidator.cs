@@ -17,6 +17,10 @@ public sealed class ReadOnlySqlValidator : IReadOnlySqlValidator
         @"\b(?:FROM|JOIN)\s+(?<table>(?:\[[^\]]+\]|[A-Za-z_][\w$]*)(?:\s*\.\s*(?:\[[^\]]+\]|[A-Za-z_][\w$]*)){0,2})",
         RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
+    private static readonly Regex TrailingLimit = new(
+        @"\s+LIMIT\s+(?<count>\d+)(?:\s+OFFSET\s+(?<offset>\d+))?\s*$",
+        RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
     private static readonly Regex ForbiddenTokens = new(
         @"\b(INSERT|UPDATE|DELETE|MERGE|CREATE|ALTER|DROP|EXEC|EXECUTE|TRUNCATE|GRANT|REVOKE|DENY|BACKUP|RESTORE|DBCC|USE|WAITFOR|BULK|INTO|OPENROWSET|OPENDATASOURCE|OPENQUERY|OPENXML|DECLARE|SET|CALL|OPTION)\b",
         RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
@@ -48,6 +52,8 @@ public sealed class ReadOnlySqlValidator : IReadOnlySqlValidator
             throw new SqlValidationException("Solo se permiten consultas SELECT.");
         }
 
+        normalized = RewriteMySqlLimit(normalized);
+
         if (ForbiddenTokens.IsMatch(normalized)
             || Regex.IsMatch(normalized, @"\b(?:FROM|JOIN)\s*\(", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)
             || Regex.IsMatch(normalized, @"\b(?:CROSS|OUTER)\s+APPLY\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
@@ -77,6 +83,41 @@ public sealed class ReadOnlySqlValidator : IReadOnlySqlValidator
         }
 
         return normalized;
+    }
+
+    /// <summary>
+    /// SQL Server no entiende LIMIT. El caso habitual del modelo, "LIMIT n" al final,
+    /// se traduce a SELECT TOP n para que la consulta sí se ejecute.
+    /// </summary>
+    private static string RewriteMySqlLimit(string sql)
+    {
+        var limit = TrailingLimit.Match(sql);
+        if (!limit.Success)
+        {
+            if (Regex.IsMatch(sql, @"\bLIMIT\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+            {
+                throw new SqlValidationException("SQL Server no admite LIMIT. La consulta debe usar SELECT TOP.");
+            }
+
+            return sql;
+        }
+
+        if (limit.Groups["offset"].Success && limit.Groups["offset"].Value != "0")
+        {
+            throw new SqlValidationException("SQL Server no admite LIMIT con desplazamiento. La consulta debe usar SELECT TOP.");
+        }
+
+        if (Regex.IsMatch(sql, @"\bSELECT\s+(?:DISTINCT\s+)?TOP\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        {
+            throw new SqlValidationException("La consulta combina TOP y LIMIT.");
+        }
+
+        var withoutLimit = TrailingLimit.Replace(sql, string.Empty);
+        return Regex.Replace(
+            withoutLimit,
+            @"^SELECT\s+(?:DISTINCT\s+)?",
+            match => $"{match.Value}TOP {limit.Groups["count"].Value} ",
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
     }
 }
 

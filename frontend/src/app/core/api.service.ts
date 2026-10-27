@@ -48,8 +48,16 @@ interface ErrorBody {
 }
 
 function toApiError(response: HttpErrorResponse): Observable<never> {
-  const body = (response.error ?? {}) as ErrorBody;
-  const detail = body.detail ?? body.error;
+  const raw = response.error;
+  const body = (
+    typeof raw === 'string' ? { detail: raw } : raw ?? {}
+  ) as ErrorBody;
+  const detail =
+    body.detail ??
+    body.error ??
+    (response.status === 500 || response.status === 502
+      ? 'Comprueba que la API esté en ejecución en el puerto 5080 y que SQL Server responda.'
+      : undefined);
 
   let error: ApiError;
   switch (response.status) {
@@ -90,6 +98,14 @@ function toApiError(response: HttpErrorResponse): Observable<never> {
         kind: 'service-unavailable',
         status: 503,
         title: body.title ?? 'Servicio no disponible',
+        detail,
+      };
+      break;
+    case 500:
+      error = {
+        kind: 'unknown',
+        status: 500,
+        title: body.title ?? 'Error en la API',
         detail,
       };
       break;
