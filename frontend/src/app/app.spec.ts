@@ -5,8 +5,6 @@ import { TestBed } from '@angular/core/testing';
 import { App } from './app';
 
 describe('App', () => {
-  let http: HttpTestingController;
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
@@ -16,39 +14,17 @@ describe('App', () => {
         provideHttpClientTesting(),
       ],
     }).compileComponents();
-    http = TestBed.inject(HttpTestingController);
   });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(App);
-    expect(fixture.componentInstance).toBeTruthy();
-  });
-
-  it('shows the API status when /health responds', async () => {
+  it('renders the header, status bar and question form', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
 
-    http.expectOne('/health').flush({
-      status: 'ok',
-      databaseConfigured: true,
-      ollamaModel: 'qwen3:4b',
-    });
-    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('h1')?.textContent).toContain('NaturalQuery');
+    expect(el.querySelector('app-status-bar')).toBeTruthy();
+    expect(el.querySelector('app-question-form')).toBeTruthy();
 
-    const text = (fixture.nativeElement as HTMLElement).textContent;
-    expect(text).toContain('API conectada');
-    expect(text).toContain('qwen3:4b');
-  });
-
-  it('shows a friendly error when the API is unreachable', async () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-
-    http.expectOne('/health').error(new ProgressEvent('error'));
-    await fixture.whenStable();
-
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain(
-      'No se pudo contactar con la API',
-    );
+    TestBed.inject(HttpTestingController).expectOne('/health');
   });
 });

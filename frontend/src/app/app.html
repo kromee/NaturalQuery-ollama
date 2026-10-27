@@ -1,15 +1,36 @@
 <main class="shell">
-  <h1>NaturalQuery · Ollama</h1>
-  <p class="subtitle">Consulta tu base de datos en español.</p>
+  <header class="header">
+    <div>
+      <h1>NaturalQuery · Ollama</h1>
+      <p class="subtitle">Consulta tu base de datos en español.</p>
+    </div>
+    <app-status-bar />
+  </header>
 
-  @if (health(); as h) {
-    <p class="status ok">
-      ● API conectada · modelo {{ h.ollamaModel }} ·
-      base de datos {{ h.databaseConfigured ? 'configurada' : 'sin configurar' }}
-    </p>
-  } @else if (error(); as e) {
-    <p class="status fail">● {{ e.title }}@if (e.detail) { — {{ e.detail }} }</p>
-  } @else {
-    <p class="status">Comprobando API…</p>
-  }
+  <app-question-form />
+
+  <!-- Provisional: la Fase 2 lo reemplaza por AnswerCard, SqlViewer, ResultTable y ErrorBanner. -->
+  <section class="output" aria-live="polite">
+    @if (store.error(); as e) {
+      <div class="card error" role="alert">
+        <strong>{{ e.title }}</strong>
+        @if (e.detail) {
+          <p>{{ e.detail }}</p>
+        }
+      </div>
+    }
+    @if (store.result(); as r) {
+      <div class="card">
+        <p>{{ r.answer }}</p>
+        <pre>{{ r.sql }}</pre>
+        <p class="meta">{{ r.rows.length }} filas{{ r.truncated ? ' (truncado)' : '' }}</p>
+      </div>
+    }
+    @if (store.preview(); as p) {
+      <div class="card">
+        <pre>{{ p.sql }}</pre>
+        <p class="meta">Vista previa: la consulta no se ejecutó.</p>
+      </div>
+    }
+  </section>
 </main>

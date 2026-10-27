@@ -1,21 +1,53 @@
 .shell {
+  display: grid;
+  gap: 1.25rem;
   max-width: 60rem;
   margin: 0 auto;
   padding: 2rem 1rem;
 }
 
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
 .subtitle {
-  color: #666;
+  margin: 0.25rem 0 0;
+  color: var(--text-muted);
 }
 
-.status {
-  font-size: 0.9rem;
+.output {
+  display: grid;
+  gap: 1rem;
 }
 
-.status.ok {
-  color: #1a7f37;
+.error {
+  border-color: var(--state-down);
 }
 
-.status.fail {
-  color: #b42318;
+.error p {
+  margin: 0.25rem 0 0;
+}
+
+pre {
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  overflow-x: auto;
+  background: var(--surface-alt);
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.meta {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
 }

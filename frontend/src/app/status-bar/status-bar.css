@@ -1,0 +1,39 @@
+.status-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--state-checking);
+}
+
+[data-state='ok'] .dot {
+  background: var(--state-ok);
+}
+
+[data-state='warn'] .dot {
+  background: var(--state-warn);
+}
+
+[data-state='down'] .dot {
+  background: var(--state-down);
+}
+
+.model {
+  font-variant-numeric: tabular-nums;
+}
